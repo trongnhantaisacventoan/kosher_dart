@@ -4,7 +4,7 @@ description: This Plugin for a specialized calendar that can calculate different
 
 version: 2.0.16
 
-homepage:  https://github.com/yakir8/kosher_dart
+homepage: https://github.com/yakir8/kosher_dart
 #author: Yakir Benin
 
 environment:

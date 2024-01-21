@@ -307,23 +307,23 @@ class ZmanimCalendar extends AstronomicalCalendar {
   /// _see [getCandleLightingOffset]_
   /// _see [setCandleLightingOffset]_
   DateTime? getCandleLighting() {
-    JewishCalendar today = JewishCalendar.fromDateTime(getCalendar());
-    JewishCalendar yesterday = JewishCalendar.fromDateTime(
-        getCalendar().add(const Duration(days: -1)));
-    int dayOfWeek = today.getDayOfWeek();
-    if ((dayOfWeek == 7 && today.isErevYomTov()) ||
-        (today.getYomTovIndex() == JewishCalendar.ROSH_HASHANA &&
-            yesterday.isErevYomTov()) ||
-        (today.isChanukah() && dayOfWeek != 6)) {
-      return AstronomicalCalendar.getTimeOffset(
-          getSunsetOffsetByDegrees(ComplexZmanimCalendar.ZENITH_7_POINT_083),
-          -13.5 * AstronomicalCalendar.MINUTE_MILLIS);
-    }
-    if (dayOfWeek == 6 || today.isErevYomTov()) {
-      return AstronomicalCalendar.getTimeOffset(getSeaLevelSunset(),
-          -getCandleLightingOffset() * AstronomicalCalendar.MINUTE_MILLIS);
-    }
-    return null;
+    // JewishCalendar today = JewishCalendar.fromDateTime(getCalendar());
+    // JewishCalendar yesterday = JewishCalendar.fromDateTime(
+    //     getCalendar().add(const Duration(days: -1)));
+    // int dayOfWeek = today.getDayOfWeek();
+    // if ((dayOfWeek == 7 && today.isErevYomTov()) ||
+    //     (today.getYomTovIndex() == JewishCalendar.ROSH_HASHANA &&
+    //         yesterday.isErevYomTov()) ||
+    //     (today.isChanukah() && dayOfWeek != 6)) {
+    //   return AstronomicalCalendar.getTimeOffset(
+    //       getSunsetOffsetByDegrees(ComplexZmanimCalendar.ZENITH_7_POINT_083),
+    //       -13.5 * AstronomicalCalendar.MINUTE_MILLIS);
+    // }
+    // if (dayOfWeek == 6 || today.isErevYomTov()) {
+    return AstronomicalCalendar.getTimeOffset(getSeaLevelSunset(),
+        -getCandleLightingOffset() * AstronomicalCalendar.MINUTE_MILLIS);
+    // }
+    // return null;
   }
 
   /// A generic method for calculating the latest _zman tfilah_ (time to recite the morning prayers)

@@ -1403,8 +1403,8 @@ class JewishDate implements Comparable<JewishDate> {
   /// @see Object#clone()
   JewishDate clone() {
     JewishDate clone = JewishDate();
-    clone.setGregorianDate(
-        _gregorianYear, _gregorianMonth - 1, _gregorianDayOfMonth);
+    clone._setInternalGregorianDate(
+        _gregorianYear, _gregorianMonth, _gregorianDayOfMonth);
     return clone;
   }
 
