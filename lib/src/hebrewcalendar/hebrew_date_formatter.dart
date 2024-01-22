@@ -820,6 +820,107 @@ class HebrewDateFormatter {
     }
   }
 
+  String formatHebrewNumberExt(int number) {
+    if (number < 0) {
+      throw ArgumentError("negative numbers can't be formatted");
+    } else if (number > 9999) {
+      throw ArgumentError("numbers > 9999 can't be formatted");
+    }
+
+    const String ALAFIM = "אלפים";
+    const String EFES = "אפס";
+
+    List<String> jHundreds = [
+      "",
+      "ק",
+      "ר",
+      "ש",
+      "ת",
+      "תק",
+      "תר",
+      "תש",
+      "תת",
+      "תתק"
+    ];
+    List<String> jTens = ["", "י", "כ", "ל", "מ", "נ", "ס", "ע", "פ", "צ"];
+    List<String> jTenEnds = ["", "י", "ך", "ל", "ם", "ן", "ס", "ע", "ף", "ץ"];
+    List<String> tavTaz = ["טו", "טז"];
+    List<String> jOnes = ["", "א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט"];
+
+    if (number == 0) {
+      // do we really need this? Should it be applicable to a date?
+      return EFES;
+    }
+    int shortNumber = number % 1000; // discard thousands
+    // next check for all possible single Hebrew digit years
+    bool singleDigitNumber = (shortNumber < 11 ||
+        (shortNumber < 100 && shortNumber % 10 == 0) ||
+        (shortNumber <= 400 && shortNumber % 100 == 0));
+    int thousands = number ~/ 1000; // get # thousands
+    StringBuffer sb = StringBuffer();
+    // append thousands to String
+    if (number % 1000 == 0) {
+      // in year is 5000, 4000 etc
+      sb.write(jOnes[thousands]);
+      if (useGershGershayim) {
+        sb.write(_GERESH);
+      }
+      sb.write(" ");
+      sb.write(
+          ALAFIM); // add # of thousands plus word thousand (overide alafim boolean)
+      return sb.toString();
+    } else if (useLongHebrewYears && number >= 1000) {
+      // if alafim boolean display thousands
+      sb.write(jOnes[thousands]);
+      if (useGershGershayim) {
+        sb.write(_GERESH); // write thousands quote
+      }
+      sb.write(" ");
+    }
+    number = number % 1000; // remove 1000s
+    int hundreds = number ~/ 100; // # of hundreds
+    sb.write(jHundreds[hundreds]); // add hundreds to String
+    number = number % 100; // remove 100s
+    if (number == 15) {
+      // special case 15
+      sb.write(tavTaz[0]);
+    } else if (number == 16) {
+      // special case 16
+      sb.write(tavTaz[1]);
+    } else {
+      int tens = number ~/ 10;
+      if (number % 10 == 0) {
+        // if evenly divisable by 10
+        if (!singleDigitNumber) {
+          if (useFinalFormLetters) {
+            sb.write(jTenEnds[
+                tens]); // years like 5780 will end with a final form &#x05E3;
+          } else {
+            sb.write(jTens[
+                tens]); // years like 5780 will end with a regular &#x05E4;
+          }
+        } else {
+          sb.write(jTens[
+              tens]); // standard letters so years like 5050 will end with a regular nun
+        }
+      } else {
+        sb.write(jTens[tens]);
+        number = number % 10;
+        sb.write(jOnes[number]);
+      }
+    }
+    if (useGershGershayim) {
+      if (singleDigitNumber) {
+        sb.write(_GERESH); // write single quote
+      } else {
+        // write double quote before last digit
+        String str = sb.toString();
+        return '${str.substring(0, str.length - 1)}$_GERESH${str.substring(str.length - 1, str.length)}';
+      }
+    }
+    return sb.toString();
+  }
+
   /// Returns a Hebrew formatted string of a number. The method can calculate from 0 - 9999.
   /// <ul>
   /// <li>Single digit numbers such as 3, 30 and 100 will be returned with a ׳ (<a
