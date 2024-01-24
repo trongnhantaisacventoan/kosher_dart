@@ -1115,6 +1115,11 @@ class ComplexZmanimCalendar extends ZmanimCalendar {
   DateTime? getSofZmanShmaMGA96Minutes() =>
       getSofZmanShma(getAlos96(), getTzais96());
 
+  DateTime? getETRatzon() {
+    return getFixedLocalChatzosBasedZmanim(
+        getFixedLocalChatzos(), getSunset(), 3.1);
+  }
+
   /// This method returns the latest _zman krias shema_ (time to recite Shema in the morning) according to the
   /// opinion of the <em><a href="https://en.wikipedia.org/wiki/Avraham_Gombinern">Magen Avraham (MGA)</a></em> based
   /// on <em>alos</em> being {@link #getAlos90Zmanis() 96} minutes <em>zmaniyos</em> before {@link #getSunrise()

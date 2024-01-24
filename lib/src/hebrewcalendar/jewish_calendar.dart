@@ -1930,6 +1930,22 @@ class JewishCalendar extends JewishDate {
   /// @return the Date representing the moment of the molad in Yerushalayim standard time (GMT + 2)
   DateTime getMoladAsDateTime() {
     JewishDate molad = getMolad();
+
+    double moladSeconds = molad.getMoladChalakim() * 10 / 3;
+    double moladMillisecond = (1000 * (moladSeconds - moladSeconds));
+    DateTime cal = DateTime(
+        molad.getGregorianYear(),
+        molad.getGregorianMonth(),
+        molad.getGregorianDayOfMonth(),
+        molad.getMoladHours(),
+        molad.getMoladMinutes(),
+        moladSeconds.toInt(),
+        moladMillisecond.toInt());
+
+    return cal;
+  }
+
+  DateTime getMoladAsStandardDateTime() {
     String locationName = "Jerusalem, Israel";
 
     double latitude = 31.778; // Har Habayis latitude
@@ -1946,20 +1962,16 @@ class JewishCalendar extends JewishDate {
     DateTime dateTime = DateTime.parse("$year-$month-$day $hour:$minute");
     GeoLocation geo =
         GeoLocation.setLocation(locationName, latitude, longitude, dateTime);
-
-    double moladSeconds = molad.getMoladChalakim() * 10 / 3;
-    double moladMillisecond = (1000 * (moladSeconds - moladSeconds));
-    DateTime cal = DateTime(
-        molad.getGregorianYear(),
-        molad.getGregorianMonth(),
-        molad.getGregorianDayOfMonth(),
-        molad.getMoladHours(),
-        molad.getMoladMinutes(),
-        moladSeconds.toInt(),
-        moladMillisecond.toInt());
     // subtract local time difference of 20.94 minutes (20 minutes and 56.496 seconds) to get to Standard time
-    cal.add(Duration(milliseconds: -1 * geo.getLocalMeanTimeOffset().toInt()));
-    return cal;
+    return getMoladAsDateTime()
+        .add(Duration(milliseconds: -1 * geo.getLocalMeanTimeOffset().toInt()));
+  }
+
+  DateTime getSofZmanKidushLevanaBetweenMoldosStandard() {
+    // add half the time between molad and molad (half of 29 days, 12 hours and 793 chalakim (44 minutes, 3.3
+    // seconds), or 14 days, 18 hours, 22 minutes and 666 milliseconds)
+    return getMoladAsStandardDateTime().add(const Duration(
+        days: 14, hours: 18, minutes: 22, seconds: 1, milliseconds: 666));
   }
 
   /// Returns the earliest time of <em>Kiddush Levana</em> calculated as 3 days after the molad. This method returns the time
